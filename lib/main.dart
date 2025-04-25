@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_example/webview_page.dart';
+import 'package:chatappphone/webview_page.dart';
 
 void main() {
   runApp(const MyApp());

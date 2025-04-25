@@ -1,5 +1,3 @@
-// ignore_for_file: camel_case_types, prefer_typing_uninitialized_variables
-
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -11,22 +9,29 @@ class WebviewPage extends StatefulWidget {
 }
 
 class _WebviewPageState extends State<WebviewPage> {
-  WebViewController? _controller;
+  late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
+
+    final PlatformWebViewControllerCreationParams params =
+        const PlatformWebViewControllerCreationParams();
+
+    _controller = WebViewController.fromPlatformCreationParams(params)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
         NavigationDelegate(
-          onProgress: (int progress) {
-            // Update loading bar.
+          onPageStarted: (String url) {
+            print("Cargando: $url");
           },
-          onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
-          onWebResourceError: (WebResourceError error) {},
+          onPageFinished: (String url) {
+            print("Cargado: $url");
+          },
+          onWebResourceError: (WebResourceError error) {
+            print("Error: ${error.description}");
+          },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.startsWith('https://www.youtube.com/')) {
               return NavigationDecision.prevent;
@@ -35,16 +40,16 @@ class _WebviewPageState extends State<WebviewPage> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('http://localhost:3000/'));
+      ..loadRequest(Uri.parse('https://chatapp-7lh7.onrender.com/'));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Crypto ChatApp"),
-          actions: const [],
-        ),
-        body: WebViewWidget(controller: _controller!));
+      appBar: AppBar(
+        title: const Text("Crypto ChatApp"),
+      ),
+      body: WebViewWidget(controller: _controller),
+    );
   }
 }
